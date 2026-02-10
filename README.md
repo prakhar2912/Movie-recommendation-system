@@ -6,7 +6,7 @@ This web app recommends movies similar to your favorite one by analyzing movie o
 ---
 
 ## 🚀 Live Demo
-👉 https://<your-streamlit-app-link>
+👉 https://movie-recommond-system.streamlit.app/
 
 ---
 
