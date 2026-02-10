@@ -18,3 +18,16 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+
+# virtual environment
+venv/
+__pycache__/
+
+# model & data files
+*.pkl
+*.csv
+
+# system files
+.DS_Store
+.env
