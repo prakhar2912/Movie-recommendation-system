@@ -15,23 +15,32 @@ st.set_page_config(
 # ---------------- CSS ----------------
 st.markdown("""
 <style>
-.movie-card {
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background: transparent;
     text-align: center;
-    color: white;
-    font-weight: 600;
+    color: #b3b3b3;
     font-size: 14px;
-    margin-top: 8px;
-    word-wrap: break-word;
+    padding: 12px 0;
 }
-.poster-img img {
-    border-radius: 12px;
-    transition: transform 0.3s ease;
-}
-.poster-img img:hover {
-    transform: scale(1.05);
+
+.footer span {
+    display: block;
+    font-size: 13px;
+    opacity: 0.7;
 }
 </style>
+
+<div class="footer">
+    Built with ❤️ using <b>Streamlit</b> & <b>TMDB API</b><br>
+    <span>Content-Based Movie Recommendation System</span>
+    <span>© Developed by <b>Prakhar Pandey</b></span>
+</div>
 """, unsafe_allow_html=True)
+
 
 
 # ---------------- HEADER ----------------
