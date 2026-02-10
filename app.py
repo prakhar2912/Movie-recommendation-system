@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import requests
 import os
+import base64
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -12,36 +13,85 @@ st.set_page_config(
     layout="wide"
 )
 
-# ---------------- CSS ----------------
+# ---------------- BACKGROUND IMAGE ----------------
+def add_bg_from_local(image_file):
+    with open(image_file, "rb") as img:
+        encoded = base64.b64encode(img.read()).decode()
+
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/jpg;base64,{encoded}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
+
+        .stApp::before {{
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: -1;
+        }}
+
+        .subtitle {{
+            text-align: center;
+            color: #cccccc;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }}
+
+        .movie-card {{
+            text-align: center;
+            font-weight: 600;
+            margin-top: 8px;
+            color: #ffffff;
+        }}
+
+        .poster-img img {{
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+        }}
+
+        .footer {{
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.6);
+            text-align: center;
+            color: #b3b3b3;
+            font-size: 14px;
+            padding: 10px 0;
+            z-index: 999;
+        }}
+
+        .footer span {{
+            display: block;
+            font-size: 13px;
+            opacity: 0.85;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+add_bg_from_local("Background_image.jpg")
+
+# ---------------- FOOTER ----------------
 st.markdown("""
-<style>
-.footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    background: transparent;
-    text-align: center;
-    color: #b3b3b3;
-    font-size: 14px;
-    padding: 12px 0;
-}
-
-.footer span {
-    display: block;
-    font-size: 13px;
-    opacity: 0.7;
-}
-</style>
-
 <div class="footer">
-    Built with ❤️ using <b>Streamlit</b> & <b>TMDB API</b><br>
+    Built with ❤️ using <b>Streamlit</b> & <b>TMDB API</b>
     <span>Content-Based Movie Recommendation System</span>
     <span>© Developed by <b>Prakhar Pandey</b></span>
 </div>
 """, unsafe_allow_html=True)
-
-
 
 # ---------------- HEADER ----------------
 st.markdown("<h1 style='text-align:center;'>🎬 Movie Recommender System</h1>", unsafe_allow_html=True)
@@ -51,7 +101,7 @@ st.divider()
 # ---------------- API KEY ----------------
 API_KEY = os.getenv("TMDB_API_KEY")
 
-# ---------------- DATA PREP ----------------
+# ---------------- DATA PREPARATION ----------------
 @st.cache_data(show_spinner=True)
 def prepare_data():
     movies = pd.read_csv("tmdb_5000_movies.csv")
@@ -68,7 +118,7 @@ def prepare_data():
 
 movies, similarity = prepare_data()
 
-# ---------------- POSTER ----------------
+# ---------------- POSTER FETCH ----------------
 def fetch_poster(movie_id):
     if not API_KEY:
         return "https://via.placeholder.com/500x750?text=No+API+Key"
@@ -113,7 +163,6 @@ if st.button("✨ Recommend Movies"):
     st.subheader("🍿 Recommended for you")
 
     cols = st.columns(5)
-
     for i in range(5):
         with cols[i]:
             st.markdown(
@@ -127,11 +176,3 @@ if st.button("✨ Recommend Movies"):
                 """,
                 unsafe_allow_html=True
             )
-
-# ---------------- FOOTER ----------------
-# st.markdown("""
-# <div class="footer">
-# Built with ❤️ using Streamlit & TMDB API<br>
-# Content-Based Movie Recommendation System
-# </div>
-# """, unsafe_allow_html=True)
