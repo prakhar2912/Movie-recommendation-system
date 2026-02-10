@@ -16,30 +16,23 @@ st.set_page_config(
 st.markdown("""
 <style>
 .movie-card {
-    background-color: #1e1e1e;
-    padding: 12px;
-    border-radius: 12px;
     text-align: center;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
-}
-.movie-title {
-    font-size: 15px;
+    color: white;
     font-weight: 600;
+    font-size: 14px;
     margin-top: 8px;
+    word-wrap: break-word;
 }
-.subtitle {
-    text-align:center;
-    font-size:18px;
-    color:#b3b3b3;
+.poster-img img {
+    border-radius: 12px;
+    transition: transform 0.3s ease;
 }
-.footer {
-    text-align:center;
-    color:gray;
-    font-size:13px;
-    margin-top:40px;
+.poster-img img:hover {
+    transform: scale(1.05);
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 # ---------------- HEADER ----------------
 st.markdown("<h1 style='text-align:center;'>🎬 Movie Recommender System</h1>", unsafe_allow_html=True)
@@ -106,18 +99,25 @@ movie_list = movies['title'].values
 selected_movie = st.selectbox("🎥 Select a movie", movie_list)
 
 if st.button("✨ Recommend Movies"):
-    with st.spinner("Finding the best recommendations..."):
-        names, posters = recommend(selected_movie)
+    names, posters = recommend(selected_movie)
 
     st.subheader("🍿 Recommended for you")
+
     cols = st.columns(5)
 
     for i in range(5):
         with cols[i]:
-            st.markdown("<div class='movie-card'>", unsafe_allow_html=True)
-            st.image(posters[i], use_container_width=True)
-            st.markdown(f"<div class='movie-title'>{names[i]}</div>", unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown(
+                f"""
+                <div class="poster-img">
+                    <img src="{posters[i]}" width="100%">
+                </div>
+                <div class="movie-card">
+                    {names[i]}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 # ---------------- FOOTER ----------------
 st.markdown("""
