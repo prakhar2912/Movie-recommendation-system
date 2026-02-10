@@ -5,14 +5,51 @@ import os
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-st.set_page_config(page_title="Movie Recommender", layout="wide")
-st.title("🎬 Movie Recommender System")
+# ---------------- PAGE CONFIG ----------------
+st.set_page_config(
+    page_title="Movie Recommender",
+    page_icon="🎬",
+    layout="wide"
+)
 
-# Read API key from Streamlit secrets / environment
+# ---------------- CSS ----------------
+st.markdown("""
+<style>
+.movie-card {
+    background-color: #1e1e1e;
+    padding: 12px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+.movie-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+.subtitle {
+    text-align:center;
+    font-size:18px;
+    color:#b3b3b3;
+}
+.footer {
+    text-align:center;
+    color:gray;
+    font-size:13px;
+    margin-top:40px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ---------------- HEADER ----------------
+st.markdown("<h1 style='text-align:center;'>🎬 Movie Recommender System</h1>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Find movies similar to your favorites using Machine Learning</p>", unsafe_allow_html=True)
+st.divider()
+
+# ---------------- API KEY ----------------
 API_KEY = os.getenv("TMDB_API_KEY")
 
-# ---------------------- DATA PREPARATION ----------------------
-
+# ---------------- DATA PREP ----------------
 @st.cache_data(show_spinner=True)
 def prepare_data():
     movies = pd.read_csv("tmdb_5000_movies.csv")
@@ -27,11 +64,9 @@ def prepare_data():
     similarity = cosine_similarity(vectors)
     return movies, similarity
 
-
 movies, similarity = prepare_data()
 
-# ---------------------- POSTER FETCH ----------------------
-
+# ---------------- POSTER ----------------
 def fetch_poster(movie_id):
     if not API_KEY:
         return "https://via.placeholder.com/500x750?text=No+API+Key"
@@ -47,13 +82,12 @@ def fetch_poster(movie_id):
         if data.get("poster_path"):
             return "https://image.tmdb.org/t/p/w500" + data["poster_path"]
 
-    except Exception:
+    except:
         pass
 
     return "https://via.placeholder.com/500x750?text=No+Poster"
 
-# ---------------------- RECOMMENDER ----------------------
-
+# ---------------- RECOMMENDER ----------------
 def recommend(movie):
     index = movies[movies['title'] == movie].index[0]
     scores = list(enumerate(similarity[index]))
@@ -67,16 +101,28 @@ def recommend(movie):
 
     return names, posters
 
-# ---------------------- UI ----------------------
-
+# ---------------- UI ----------------
 movie_list = movies['title'].values
-selected_movie = st.selectbox("Select a movie", movie_list)
+selected_movie = st.selectbox("🎥 Select a movie", movie_list)
 
-if st.button("🎯 Show Recommendation"):
-    names, posters = recommend(selected_movie)
+if st.button("✨ Recommend Movies"):
+    with st.spinner("Finding the best recommendations..."):
+        names, posters = recommend(selected_movie)
+
+    st.subheader("🍿 Recommended for you")
     cols = st.columns(5)
 
     for i in range(5):
         with cols[i]:
-            st.caption(names[i])
+            st.markdown("<div class='movie-card'>", unsafe_allow_html=True)
             st.image(posters[i], use_container_width=True)
+            st.markdown(f"<div class='movie-title'>{names[i]}</div>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+# ---------------- FOOTER ----------------
+st.markdown("""
+<div class="footer">
+Built with ❤️ using Streamlit & TMDB API<br>
+Content-Based Movie Recommendation System
+</div>
+""", unsafe_allow_html=True)
