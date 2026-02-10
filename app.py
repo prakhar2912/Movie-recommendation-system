@@ -129,9 +129,9 @@ if st.button("✨ Recommend Movies"):
             )
 
 # ---------------- FOOTER ----------------
-st.markdown("""
-<div class="footer">
-Built with ❤️ using Streamlit & TMDB API<br>
-Content-Based Movie Recommendation System
-</div>
-""", unsafe_allow_html=True)
+# st.markdown("""
+# <div class="footer">
+# Built with ❤️ using Streamlit & TMDB API<br>
+# Content-Based Movie Recommendation System
+# </div>
+# """, unsafe_allow_html=True)
